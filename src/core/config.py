@@ -23,6 +23,15 @@ class DataBaseSettings(BaseModel):
     autoflush: bool = False
 
 
+class UserSchemaConfig(BaseModel):
+    """Конфигурация Pydantic-схемы пользователя"""
+
+    username_min_length: int = 5
+    username_max_length: int = 32
+
+    password_min_length: int = 8
+
+
 class Settings(BaseSettings):
     """Класс для последующего считывания переменных окружения."""
 
@@ -35,6 +44,7 @@ class Settings(BaseSettings):
 
     run: RunConfig = RunConfig()
     db: DataBaseSettings
+    usc: UserSchemaConfig = UserSchemaConfig()
 
 
 settings = Settings()  # type: ignore

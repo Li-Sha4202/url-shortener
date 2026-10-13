@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, DateTime
+from sqlalchemy import String, DateTime, Boolean
 
 from db.base import Base
 
@@ -21,8 +21,14 @@ class User(Base):
         DateTime(timezone=True),
         default=datetime.now(timezone.utc),
     )
+    is_admin: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        nullable=False,
+    )
 
     links: Mapped[list["Link"]] = relationship(
         back_populates="user",
-        lazy="selectin",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )

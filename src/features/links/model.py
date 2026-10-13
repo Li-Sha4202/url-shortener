@@ -16,7 +16,11 @@ class Link(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     original_url: Mapped[str] = mapped_column()
     short_code: Mapped[str] = mapped_column(unique=True)
-    user_id: Mapped[str] = mapped_column(ForeignKey("user.id"), nullable=True)
+    user_id: Mapped[str] = mapped_column(
+        ForeignKey("user.id"),
+        nullable=True,
+        ondelete="CASCADE",
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=datetime.now(timezone.utc),
