@@ -2,15 +2,15 @@ from datetime import datetime
 
 from typing import Optional
 
-from pydantic import BaseModel, Field, EmailStr
+from pydantic import BaseModel, Field, EmailStr, ConfigDict
 
 from core.config import settings
 
 
-class UserCreate(BaseModel):
+class UserCreateSchema(BaseModel):
     """Схема для создания пользователя"""
 
-    username: str = Field(
+    name: str = Field(
         ...,
         min_length=settings.usc.username_min_length,
         max_length=settings.usc.username_max_length,
@@ -29,10 +29,10 @@ class UserCreate(BaseModel):
     )
 
 
-class UserResponse(BaseModel):
+class UserResponseSchema(BaseModel):
     """Схема ответа на запрос о пользователе"""
 
-    username: str = Field(
+    name: str = Field(
         ...,
         description="Имя пользователя",
     )
@@ -50,4 +50,8 @@ class UserResponse(BaseModel):
     is_admin: bool = Field(
         ...,
         description="Является ли администратором",
+    )
+
+    model_config = ConfigDict(
+        from_attributes=True,
     )

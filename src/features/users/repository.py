@@ -10,11 +10,11 @@ class UserRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create_user(self, username: str, password: bytes, email: str) -> User:
+    async def create_user(self, name: str, password: str, email: str) -> User:
         """Создание пользователя"""
         stmt = User(
             email=email,
-            username=username,
+            name=name,
             password=password,
         )
         self.session.add(stmt)
@@ -28,9 +28,9 @@ class UserRepository:
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
 
-    async def get_by_name(self, username: str) -> User | None:
+    async def get_by_name(self, name: str) -> User | None:
         """Поиск пользователя по имени"""
 
-        stmt = select(User).where(User.name == username)
+        stmt = select(User).where(User.name == name)
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()

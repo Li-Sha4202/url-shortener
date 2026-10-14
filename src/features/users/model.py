@@ -14,7 +14,7 @@ class User(Base):
     """SQL - Модель пользователя"""
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(32))
+    name: Mapped[str] = mapped_column(String(32), unique=True)
     email: Mapped[str] = mapped_column(unique=True)
     password: Mapped[str] = mapped_column()
     created_at: Mapped[datetime] = mapped_column(
