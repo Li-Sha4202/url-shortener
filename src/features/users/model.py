@@ -4,10 +4,10 @@ from typing import TYPE_CHECKING
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, DateTime, Boolean
 
-from db.base import Base
+from src.db.base import Base
 
 if TYPE_CHECKING:
-    from features.links.model import Link
+    from src.features.links.model import Link
 
 
 class User(Base):
@@ -21,7 +21,7 @@ class User(Base):
     password: Mapped[str] = mapped_column()
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=datetime.now(timezone.utc),
+        default=lambda: datetime.now(timezone.utc),
     )
     is_admin: Mapped[bool] = mapped_column(
         Boolean,
@@ -30,7 +30,7 @@ class User(Base):
     )
 
     links: Mapped[list["Link"]] = relationship(
-        back_populates="user",
+        back_populates="users",
         cascade="all, delete-orphan",
         passive_deletes=True,
     )

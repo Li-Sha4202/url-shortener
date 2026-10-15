@@ -4,30 +4,33 @@ from typing import TYPE_CHECKING
 from sqlalchemy import DateTime, ForeignKey, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from db.base import Base
+from src.db.base import Base
 
 if TYPE_CHECKING:
-    from features.users.model import User
+    from src.features.users.model import User
 
 
 class Link(Base):
     """SQL - Модель ссылки"""
 
+    __tablename__ = "links"
+
     id: Mapped[int] = mapped_column(primary_key=True)
     original_url: Mapped[str] = mapped_column()
     short_code: Mapped[str] = mapped_column(unique=True)
-    user_id: Mapped[str] = mapped_column(
-        ForeignKey("user.id"),
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey(
+            "users.id",
+            ondelete="CASCADE",
+        ),
         nullable=True,
-        ondelete="CASCADE",
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=datetime.now(timezone.utc),
+        default=lambda: datetime.now(timezone.utc),
     )
     expires_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=datetime.now(timezone.utc),
     )
 
     first_click: Mapped[datetime] = mapped_column(
@@ -38,12 +41,11 @@ class Link(Base):
         DateTime(timezone=True),
         nullable=True,
     )
-    clicks_count: Mapped[datetime] = mapped_column(default=0)
+    clicks_count: Mapped[int] = mapped_column(default=0)
 
     clicks_by_day: Mapped[dict[str, int]] = mapped_column(
         JSON,
         nullable=True,
-        default={},
     )
 
     user: Mapped["User"] = relationship(

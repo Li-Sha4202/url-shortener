@@ -2,8 +2,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.exceptions import err_400_user_already_exists
 
-from features.users.model import User
-from features.users.repository import UserRepository
+from src.features.users.model import User
+from src.features.users.repository import UserRepository
 
 
 class UserService:

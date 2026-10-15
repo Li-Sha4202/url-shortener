@@ -3,10 +3,10 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from core.config import settings
-from db.engine import db
+from src.core.config import settings
+from src.db.engine import db
 
-from features.users.router import router as users_router
+from src.features.users.router import router as users_router
 
 app = FastAPI()
 
