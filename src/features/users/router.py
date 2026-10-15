@@ -13,13 +13,13 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 @router.post(
     "/register",
-    response_model=UserCreateSchema,
+    response_model=UserResponseSchema,
     status_code=status.HTTP_201_CREATED,
 )
 async def user_register(
     data: UserCreateSchema,
     service: UserService = Depends(get_user_service),
-) -> UserResponseSchema:
+):
     """Регистрация пользователя."""
 
     user = await service.create_user(

@@ -18,12 +18,12 @@ class UserService:
         name: str,
         email: str,
         password: str,
-    ) -> User | None:
+    ) -> User:
         """Создание нового пользователя"""
 
         result = await self.repo.get_by_email(email=email)
         if result is not None:
-            err_400_user_already_exists(email)
+            raise err_400_user_already_exists(email)
 
         user = await self.repo.create_user(
             name=name,
