@@ -6,7 +6,11 @@ from fastapi import FastAPI
 from core.config import settings
 from db.engine import db
 
+from features.users import routers as users_router
+
 app = FastAPI()
+
+app.include_router(users_router)
 
 
 @asynccontextmanager

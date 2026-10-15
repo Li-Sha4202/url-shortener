@@ -8,7 +8,7 @@ from .service import UserService
 from .schema import UserCreateSchema, UserResponseSchema
 from .dependencies import get_user_service
 
-router = APIRouter(prefix="/users", tags=["Users"])
+router = APIRouter()
 
 
 @router.post(

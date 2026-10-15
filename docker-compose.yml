@@ -7,6 +7,8 @@ services:
     working_dir: /app
     volumes:
       - .:/app
+    ports:
+      - "8000:8000"
     depends_on:
       pg:
         condition: service_healthy
