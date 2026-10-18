@@ -1,0 +1,6 @@
+.pycache/
+.vscode/
+.__pycache__
+.venv/
+.gigacode/
+.pytest_cache

@@ -29,8 +29,8 @@ class User(Base):
         nullable=False,
     )
 
-    links: Mapped[list["Link"]] = relationship(
-        back_populates="users",
-        cascade="all, delete-orphan",
-        passive_deletes=True,
-    )
+    # links: Mapped[list["Link"]] = relationship(
+    #     back_populates="user",
+    #     cascade="all, delete-orphan",
+    #     passive_deletes=True,
+    # )
