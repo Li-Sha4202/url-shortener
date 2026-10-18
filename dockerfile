@@ -2,8 +2,7 @@ FROM python:3.13.2-bookworm
 
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
-
-WORKDIR /app
+ENV PYTHONPATH=/app
 
 RUN pip install --upgrade pip wheel "poetry==2.4.1"
 RUN poetry config virtualenvs.create false
