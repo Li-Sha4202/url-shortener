@@ -32,6 +32,14 @@ class UserSchemaConfig(BaseModel):
     password_min_length: int = 8
 
 
+class JWTSettings(BaseModel):
+    """Настройки создания JWT-токена"""
+
+    SECRET_KEY: str
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
+
 class Settings(BaseSettings):
     """Класс для последующего считывания переменных окружения."""
 
@@ -45,6 +53,7 @@ class Settings(BaseSettings):
     run: RunConfig = RunConfig()
     db: DataBaseSettings
     usc: UserSchemaConfig = UserSchemaConfig()
+    jwt: JWTSettings
 
 
 settings = Settings()  # type: ignore

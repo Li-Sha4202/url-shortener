@@ -34,3 +34,10 @@ class UserRepository:
         stmt = select(User).where(User.name == name)
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
+
+    async def get_by_id(self, id: int) -> User | None:
+        """Поиск пользователя по ID"""
+
+        stmt = select(User).where(User.id == id)
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()
