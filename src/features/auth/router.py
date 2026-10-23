@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.db.engine import get_session
 
 from src.core.security.jwt_token import create_access_token
-from src.core.security.argon_hasher import verify_password
+from src.core.security.argon_hasher import verify_password, DUMMY_HASH
 
 from src.core.exceptions import err_401_not_authentificated
 
@@ -14,7 +14,7 @@ from src.features.auth.schema import Token
 
 from src.features.users.repository import UserRepository
 
-router = APIRouter(prefix="auth", tags=["auth"])
+router = APIRouter(prefix="/auth", tags=["auth"])
 
 
 @router.post(
@@ -29,7 +29,8 @@ async def login(
     repo = UserRepository(session)
 
     user = await repo.get_by_name(form_data.username)
-    if not user or not verify_password(form_data.password, user.password):
+    if not user or not verify_password(user.password, form_data.password):
+        verify_password(DUMMY_HASH, form_data.password)
         raise err_401_not_authentificated()
 
     access_token = create_access_token(user_id=user.id)
