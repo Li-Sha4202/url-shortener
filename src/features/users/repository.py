@@ -41,3 +41,14 @@ class UserRepository:
         stmt = select(User).where(User.id == id)
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
+
+    async def update(self, user: User, **fields) -> User:
+        """Обновление данных пользователя - только переданные поля"""
+        for key, value in fields.items():
+            setattr(user, key, value)
+        await self.session.flush()
+        return user
+
+    async def delete(self, user: User) -> None:
+        await self.session.delete(user)
+        await self.session.flush()

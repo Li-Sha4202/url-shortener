@@ -22,3 +22,17 @@ def err_401_not_validate_credentials():
         detail="Could not validate credentials [ID-3]",
         headers={"WWW-Authenticate": "Bearer"},
     )
+
+
+def err_400_requied_current_password():
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail="Требуется ввести пароль для обновления почты",
+    )
+
+
+def err_400_invalid_password():
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail="Неверный пароль",
+    )
