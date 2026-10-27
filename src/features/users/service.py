@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.exceptions import (
@@ -83,7 +85,11 @@ class UserService:
             raise err_400_invalid_password()
 
         hashed = password_hash(data.new_password)
-        await self.repo.update(user, password=hashed)
+        await self.repo.update(
+            user,
+            password=hashed,
+            password_changed_at=datetime.now(timezone.utc),
+        )
         await self.session.commit()
         return user
 

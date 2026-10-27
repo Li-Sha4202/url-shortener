@@ -28,9 +28,14 @@ class User(Base):
         default=False,
         nullable=False,
     )
+    password_changed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
 
-    # links: Mapped[list["Link"]] = relationship(
-    #     back_populates="user",
-    #     cascade="all, delete-orphan",
-    #     passive_deletes=True,
-    # )
+    links: Mapped[list["Link"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )

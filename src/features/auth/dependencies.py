@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 
@@ -22,17 +24,31 @@ async def get_current_user(
     session: AsyncSession = Depends(get_session),
 ) -> User:
     """Получение текущего авторизованного юзера по его jwt-токену"""
+
     try:
         payload = decode_access_token(token=token)
-        user_id_str: str | None = payload.get("sub")
-        if user_id_str is None:
-            raise err_401_not_validate_credentials()
-        user_id = int(user_id_str)
     except (JWTError, ValueError):
+        raise err_401_not_validate_credentials()
+
+    user_id_str: str | None = payload.get("sub")
+    iat = payload.get("iat")
+    token_type = payload.get("type")
+
+    if user_id_str is None or iat is None or token_type != "access":
+        raise err_401_not_validate_credentials()
+
+    try:
+        user_id = int(user_id_str)
+    except ValueError:
         raise err_401_not_validate_credentials()
 
     repo = UserRepository(session)
     user = await repo.get_by_id(id=user_id)
     if user is None:
         raise err_401_not_validate_credentials()
+
+    token_issued_at = datetime.fromtimestamp(iat, tz=timezone.utc)
+    if token_issued_at < user.password_changed_at:
+        raise err_401_not_validate_credentials()
+
     return user
