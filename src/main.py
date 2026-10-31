@@ -8,11 +8,15 @@ from src.db.engine import db
 
 from src.features.users.router import router as users_router
 from src.features.auth.router import router as auth_router
+from src.features.links.router import router as links_router
+from src.features.links.redirect import router as redirect_router
 
 app = FastAPI()
 
 app.include_router(users_router)
 app.include_router(auth_router)
+app.include_router(links_router)
+app.include_router(redirect_router)
 
 
 @asynccontextmanager

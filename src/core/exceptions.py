@@ -27,12 +27,40 @@ def err_401_not_validate_credentials():
 def err_400_requied_current_password():
     raise HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST,
-        detail="Требуется ввести пароль для обновления почты",
+        detail="Требуется ввести пароль для обновления почты [ID-4]",
     )
 
 
 def err_400_invalid_password():
     raise HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST,
-        detail="Неверный пароль",
+        detail="Неверный пароль [ID-5]",
+    )
+
+
+def err_400_bad_req_exp_link():
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail="Срок ссылки истечён [ID-6]",
+    )
+
+
+def err_400_reserved_codes(code_name):
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail=f"{code_name} уже занят [ID-7]",
+    )
+
+
+def err_400_code_exists_in_db(code_name):
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail=f'{code_name}" - код занят [ID-8]',
+    )
+
+
+def err_404_link_not_found(code_name):
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f'Короткая ссылка - "{code_name}" - которую вы пытались открыть, не найдена',
     )

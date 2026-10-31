@@ -8,6 +8,7 @@ class RunConfig(BaseModel):
     host: str = "0.0.0.0"
     port: int = 8000
     reload: bool = True
+    public_url: str = "http://localhost"
 
 
 class DataBaseSettings(BaseModel):
@@ -32,6 +33,16 @@ class UserSchemaConfig(BaseModel):
     password_min_length: int = 8
 
 
+class LinkSchemaConfig(BaseModel):
+    """Конфигурация Pydantic-схемы ссылки"""
+
+    expire_in_days_min_length: int = 1
+    expire_in_days_max_length: int = 365
+
+    shortcode_min_length: int = 8
+    shortcode_max_length: int = 20
+
+
 class JWTSettings(BaseModel):
     """Настройки создания JWT-токена"""
 
@@ -53,6 +64,7 @@ class Settings(BaseSettings):
     run: RunConfig = RunConfig()
     db: DataBaseSettings
     usc: UserSchemaConfig = UserSchemaConfig()
+    ls: LinkSchemaConfig = LinkSchemaConfig()
     jwt: JWTSettings
 
 
