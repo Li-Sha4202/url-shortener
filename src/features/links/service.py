@@ -140,3 +140,29 @@ class LinkService:
         link = await self.get_user_link(user_id, short_code)
         await self.repo.delete(link)
         await self.session.commit()
+
+    async def get_link_stats(self, user_id: int, short_code: str) -> dict:
+        """Статистике по одной ссылке"""
+
+        link = await self.repo.get_by_code_and_user(short_code, user_id)
+
+        if link is None:
+            raise err_404_link_not_found(short_code)
+
+        return {
+            "short_code": link.short_code,
+            "clicks_count": link.clicks_count,
+            "first_click": link.first_click,
+            "last_click": link.last_click,
+            "clicks_by_day": link.clicks_by_day or {},
+        }
+
+    async def get_global_stats(self) -> dict:
+        """Глобальная статистика"""
+        return await self.repo.get_global_stats()
+
+    async def get_top_links(self, limit: int = 10):
+        """Топ ссылок по кликам"""
+        if limit < 1 or limit > 100:
+            raise ValueError("Лимит должен быть от 0 до 100")
+        return await self.repo.get_top(limit)

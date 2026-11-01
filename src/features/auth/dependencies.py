@@ -11,7 +11,7 @@ from src.db.engine import get_session
 
 from src.core.security.jwt_token import decode_access_token
 
-from src.core.exceptions import err_401_not_validate_credentials
+from src.core.exceptions import err_401_not_validate_credentials, err_403_not_admin
 
 from src.features.users.repository import UserRepository
 from src.features.users.model import User
@@ -52,3 +52,10 @@ async def get_current_user(
         raise err_401_not_validate_credentials()
 
     return user
+
+
+async def get_current_admin_user(current_user: User = Depends(get_current_user)):
+    """Проверка на админа"""
+    if not current_user.is_admin:
+        raise err_403_not_admin()
+    return current_user

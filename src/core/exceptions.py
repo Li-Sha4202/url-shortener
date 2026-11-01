@@ -64,3 +64,10 @@ def err_404_link_not_found(code_name):
         status_code=status.HTTP_404_NOT_FOUND,
         detail=f'Короткая ссылка - "{code_name}" - которую вы пытались открыть, не найдена',
     )
+
+
+def err_403_not_admin():
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail="Отсутствуют права администратора",
+    )
