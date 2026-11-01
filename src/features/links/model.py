@@ -49,7 +49,7 @@ class Link(Base):
         nullable=True,
     )
 
-    # user: Mapped["User | None"] = relationship(
-    #     back_populates="links",
-    #     lazy="selectin",
-    # )
+    user: Mapped["User | None"] = relationship(
+        back_populates="links",
+        lazy="selectin",
+    )

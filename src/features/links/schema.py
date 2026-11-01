@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Optional, Dict, Annotated
 
 from pydantic import (
@@ -6,13 +6,11 @@ from pydantic import (
     BaseModel,
     HttpUrl,
     computed_field,
-    field_validator,
     ConfigDict,
 )
 from pydantic.types import StringConstraints
 
 from src.core.config import settings
-from src.core.exceptions import err_400_bad_req_exp_link
 
 # Алиас для валидации кастомной ссылки
 ShortCode = Annotated[
@@ -47,6 +45,8 @@ class LinkCreate(LinkBase):
         description=("Время истечения ссылки (Опционально)" "По умолчанию не истекает"),
     )
 
+    model_config = ConfigDict(extra="forbid")
+
 
 class LinkResponse(BaseModel):
     """Модель для ответа серверу, когда ссылка уже создана"""
@@ -54,7 +54,7 @@ class LinkResponse(BaseModel):
     short_code: str
     original_url: str
     created_at: datetime
-    expires_at_days: datetime | None = None
+    expires_at: datetime | None = None
 
     @computed_field
     @property
@@ -139,7 +139,12 @@ class LinkUpdate(BaseModel):
         default=None,
         ge=settings.ls.expire_in_days_min_length,
         le=settings.ls.expire_in_days_max_length,
-        description=("Время истечения ссылки (Опционально)" "По умолчанию не истекает"),
+        description=(
+            "Срок ссылки в днях. "
+            "-1 = убрать срок (т.е. бессрочная ссылка)"
+            "1-365 = установить срок."
+            "Не передавать - не менять."
+        ),
     )
 
     model_config = ConfigDict(extra="forbid")

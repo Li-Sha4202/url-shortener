@@ -36,10 +36,10 @@ class UserSchemaConfig(BaseModel):
 class LinkSchemaConfig(BaseModel):
     """Конфигурация Pydantic-схемы ссылки"""
 
-    expire_in_days_min_length: int = 1
+    expire_in_days_min_length: int = -1
     expire_in_days_max_length: int = 365
 
-    shortcode_min_length: int = 8
+    shortcode_min_length: int = 5
     shortcode_max_length: int = 20
 
 

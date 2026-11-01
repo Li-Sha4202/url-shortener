@@ -1,6 +1,4 @@
 from datetime import datetime, timedelta, timezone
-import secrets
-import string
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -37,7 +35,7 @@ RESERVED_CODES = {
 
 
 class LinkService:
-    MAX_RETRIES = 5
+    """Класс с Бизнес-логикой ссылок"""
 
     def __init__(self, session: AsyncSession):
         self.session = session
@@ -117,15 +115,19 @@ class LinkService:
         link = await self.repo.get_by_code_and_user(short_code, user_id)
         updates = data.model_dump(exclude_unset=True)
 
+        if link is None:
+            raise err_404_link_not_found(short_code)
+
         if "original_url" in updates:
             updates["original_url"] = str(updates["original_url"])
         if "expires_at_days" in updates:
             days = updates.pop("expires_at_days")
-            updates["expires_at_days"] = (
-                datetime.now(timezone.utc) + timedelta(days=days)
-                if days is not None
-                else None
-            )
+            if days is None or days == -1:
+                updates["expires_at"] = None
+            else:
+                updates["expires_at"] = datetime.now(timezone.utc) + timedelta(
+                    days=days
+                )
 
         if not updates:
             return link

@@ -55,7 +55,7 @@ def err_400_reserved_codes(code_name):
 def err_400_code_exists_in_db(code_name):
     raise HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST,
-        detail=f'{code_name}" - код занят [ID-8]',
+        detail=f"{code_name} - код занят [ID-8]",
     )
 
 
