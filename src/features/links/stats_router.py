@@ -19,7 +19,7 @@ async def global_stats(
     return await service.get_global_stats()
 
 
-@router.get("/top", response_model=LinkStatsTop)
+@router.get("/top", response_model=list[LinkStatsTop])
 async def top_links(
     limit: int = Query(10, ge=1, le=100),
     current_admin: User = Depends(get_current_admin_user),

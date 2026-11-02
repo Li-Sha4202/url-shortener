@@ -96,7 +96,7 @@ class LinkStatsTop(BaseModel):
 
     short_code: str
     original_url: str
-    click_count: int
+    clicks_count: int
     created_at: datetime
 
     @computed_field
