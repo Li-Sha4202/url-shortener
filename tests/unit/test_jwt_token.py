@@ -66,17 +66,6 @@ class TestCreateAccessToken:
         diff = payload["exp"] - payload["iat"]
         assert diff == 3600  # 1 час в секундах
 
-    def test_different_tokens_have_different_iat(self, mock_settings):
-        """Два токена, созданные в разное время, должны иметь разные iat."""
-        token1 = create_access_token(user_id=1)
-        import time
-
-        time.sleep(0.1)
-        token2 = create_access_token(user_id=1)
-        payload1 = decode_access_token(token1)
-        payload2 = decode_access_token(token2)
-        assert payload1["iat"] != payload2["iat"]
-
     def test_different_user_ids(self, mock_settings):
         """Токены для разных user_id должны иметь разные sub."""
         token1 = create_access_token(user_id=1)

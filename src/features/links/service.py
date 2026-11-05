@@ -10,7 +10,7 @@ from src.core.exceptions import (
 )
 
 from src.features.links.repository import LinkRepository
-from src.features.links.schema import LinkCreate, LinkUpdate, LinkResponse
+from src.features.links.schema import LinkCreate, LinkUpdate
 from src.features.links.model import Link
 
 from src.utils.base62 import generate_short_code
