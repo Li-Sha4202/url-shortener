@@ -84,3 +84,57 @@ async def other_user(db_session) -> User:
 @pytest.fixture
 async def service(db_session) -> LinkService:
     return LinkService(session=db_session)
+
+
+@pytest.fixture
+async def registered_user(client: AsyncClient) -> dict:
+    """Регистрирует юзера и логинится. Возвращает email/password/token."""
+    email = "e2e@example.com"
+    password = "secret123"
+
+    r = await client.post(
+        "/users/register",
+        json={
+            "name": "e2euser",
+            "email": email,
+            "password": password,
+        },
+    )
+    assert r.status_code == 201, r.text
+
+    r = await client.post(
+        "/auth/login",
+        data={"username": email, "password": password},  # OAuth2 form
+    )
+    assert r.status_code == 200, r.text
+    token = r.json()["access_token"]
+
+    return {"email": email, "password": password, "token": token}
+
+
+@pytest.fixture
+async def auth_headers(registered_user) -> dict:
+    return {"Authorization": f"Bearer {registered_user['token']}"}
+
+
+@pytest.fixture
+async def admin_headers(client: AsyncClient, db_session) -> dict:
+    """Создаёт админа напрямую в БД + логинится."""
+    from src.features.users.model import User
+    from src.core.security.argon_hasher import password_hash
+
+    admin = User(
+        name="admin",
+        email="admin@example.com",
+        password=password_hash("adminpass"),
+        is_admin=True,
+    )
+    db_session.add(admin)
+    await db_session.flush()
+
+    r = await client.post(
+        "/auth/login",
+        data={"username": "admin@example.com", "password": "adminpass"},
+    )
+    assert r.status_code == 200, r.text
+    return {"Authorization": f"Bearer {r.json()['access_token']}"}

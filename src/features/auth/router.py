@@ -28,7 +28,8 @@ async def login(
     """Аутентификация пользователя и получение токена"""
     repo = UserRepository(session)
 
-    user = await repo.get_by_name(form_data.username)
+    user = await repo.get_by_email(form_data.username)
+    print(f"user={user}, form_data={form_data.username}")
     if not user or not verify_password(user.password, form_data.password):
         verify_password(DUMMY_HASH, form_data.password)
         raise err_401_not_authentificated()

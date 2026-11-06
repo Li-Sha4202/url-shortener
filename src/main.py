@@ -14,7 +14,7 @@ from src.features.links.stats_router import router as stats_router
 
 app = FastAPI()
 
-app.include_router(users_router)
+app.include_router(users_router, prefix="/users")
 app.include_router(auth_router)
 app.include_router(links_router)
 app.include_router(redirect_router)
