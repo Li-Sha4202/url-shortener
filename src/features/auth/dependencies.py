@@ -59,3 +59,24 @@ async def get_current_admin_user(current_user: User = Depends(get_current_user))
     if not current_user.is_admin:
         raise err_403_not_admin()
     return current_user
+
+
+oauth2_scheme_optional = OAuth2PasswordBearer(
+    tokenUrl="/auth/login",
+    auto_error=False,
+)
+
+
+async def get_current_user_optional(
+    token: str | None = Depends(oauth2_scheme_optional),
+    session: AsyncSession = Depends(get_session),
+) -> User | None:
+
+    if token is None:
+        return None
+
+    try:
+        payload = decode_access_token(token)
+        return await UserRepository(session).get_by_id(int(payload["sub"]))
+    except (JWTError, ValueError, KeyError):
+        return None

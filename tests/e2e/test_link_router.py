@@ -54,7 +54,7 @@ class TestLinkRouter:
     async def test_create_link_reserved_code(self, client, auth_headers):
         r = await client.post(
             "/links/create",
-            json={"original_url": "https://example.com", "short_code": "api"},
+            json={"original_url": "https://example.com", "short_code": "admin"},
             headers=auth_headers,
         )
         assert r.status_code == 400
@@ -70,7 +70,7 @@ class TestLinkRouter:
     async def test_create_link_invalid_expiration(self, client, auth_headers):
         r = await client.post(
             "/links/create",
-            json={"original_url": "https://example.com", "expires_at_days": 0},
+            json={"original_url": "https://example.com", "expires_at_days": 400},
             headers=auth_headers,
         )
         assert r.status_code == 422
@@ -117,7 +117,9 @@ class TestLinkRouter:
         assert r.status_code == 400
 
     # -- My Links --
-    async def test_my_links_only_own(self, client, auth_headers, db_session):
+    async def test_my_links_only_own(
+        self, client, auth_headers, other_user, db_session
+    ):
         # Создаём две ссылки от этого юзера
         for url in ("https://a.com", "https://b.com"):
             await client.post(
@@ -130,7 +132,11 @@ class TestLinkRouter:
         from src.features.links.model import Link
 
         db_session.add(
-            Link(short_code="other", original_url="https://other.com", user_id=9999)
+            Link(
+                short_code="other",
+                original_url="https://other.com",
+                user_id=other_user.id,
+            )
         )
         await db_session.flush()
 
@@ -159,13 +165,19 @@ class TestLinkRouter:
             headers=auth_headers,
         )
         assert r.status_code == 200
-        assert r.json()["original_url"] == "https://new.com"
+        assert r.json()["original_url"] == "https://new.com/"
 
-    async def test_update_link_not_owner(self, client, auth_headers, db_session):
+    async def test_update_link_not_owner(
+        self, client, auth_headers, other_user, db_session
+    ):
         from src.features.links.model import Link
 
         db_session.add(
-            Link(short_code="other", original_url="https://x.com", user_id=9999)
+            Link(
+                short_code="other",
+                original_url="https://x.com",
+                user_id=other_user.id,
+            )
         )
         await db_session.flush()
 
@@ -215,11 +227,17 @@ class TestLinkRouter:
         r = await client.get(f"/{code}", follow_redirects=False)
         assert r.status_code == 404
 
-    async def test_delete_link_not_owner(self, client, auth_headers, db_session):
+    async def test_delete_link_not_owner(
+        self, client, auth_headers, other_user, db_session
+    ):
         from src.features.links.model import Link
 
         db_session.add(
-            Link(short_code="other", original_url="https://x.com", user_id=9999)
+            Link(
+                short_code="other",
+                original_url="https://x.com",
+                user_id=other_user.id,
+            )
         )
         await db_session.flush()
 

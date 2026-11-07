@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, status
-from fastapi.responses import RedirectResponse
 
-from src.features.auth.dependencies import get_current_user
+from src.features.auth.dependencies import get_current_user, get_current_user_optional
 from src.features.users.model import User
 
 from src.features.links.service import LinkService
@@ -16,7 +15,7 @@ router = APIRouter(prefix="/links", tags=["Links"])
 )
 async def create(
     data: LinkCreate,
-    current_user: User | None = Depends(get_current_user),
+    current_user: User | None = Depends(get_current_user_optional),
     service: LinkService = Depends(get_link_service),
 ):
     """Создание ссылки"""
