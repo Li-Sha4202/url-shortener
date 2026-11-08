@@ -138,3 +138,23 @@ async def admin_headers(client: AsyncClient, db_session) -> dict:
     )
     assert r.status_code == 200, r.text
     return {"Authorization": f"Bearer {r.json()['access_token']}"}
+
+
+@pytest.fixture
+async def other_user_headers(client: AsyncClient) -> dict:
+    r = await client.post(
+        "/register",
+        json={
+            "name": "otheruser",
+            "email": "other@example.com",
+            "password": "secret123",
+        },
+    )
+    assert r.status_code == 201, r.text
+
+    r = await client.post(
+        "/auth/login",
+        data={"username": "other@example.com", "password": "secret123"},
+    )
+    assert r.status_code == 200, r.text
+    return {"Authorization": f"Bearer {r.json()['access_token']}"}

@@ -47,7 +47,8 @@ async def get_current_user(
     if user is None:
         raise err_401_not_validate_credentials()
 
-    token_issued_at = datetime.fromtimestamp(iat, tz=timezone.utc)
+    iat_ms = payload.get("iat_ms", payload["iat"] * 1000)
+    token_issued_at = datetime.fromtimestamp(iat_ms / 1000, tz=timezone.utc)
     if int(token_issued_at.timestamp()) < int(user.password_changed_at.timestamp()):
         raise err_401_not_validate_credentials()
 

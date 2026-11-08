@@ -13,7 +13,8 @@ def create_access_token(user_id: int, expire_delta: timedelta | None = None) -> 
     data = {
         "sub": str(user_id),
         "exp": int(expire.timestamp()),
-        "iat": int(now.timestamp()),
+        "iat": int(now.timestamp() * 1000),
+        "iat_ms": int(now.timestamp() * 1000),
         "type": "access",
     }
     encode = jwt.encode(data, settings.jwt.SECRET_KEY, settings.jwt.ALGORITHM)
