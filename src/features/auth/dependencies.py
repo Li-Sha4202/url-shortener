@@ -32,6 +32,7 @@ async def get_current_user(
 
     user_id_str: str | None = payload.get("sub")
     iat = payload.get("iat")
+    iat_ms = payload.get("iat_ms")
     token_type = payload.get("type")
 
     if user_id_str is None or iat is None or token_type != "access":
@@ -49,7 +50,7 @@ async def get_current_user(
 
     iat_ms = payload.get("iat_ms", payload["iat"] * 1000)
     token_issued_at = datetime.fromtimestamp(iat_ms / 1000, tz=timezone.utc)
-    if int(token_issued_at.timestamp()) < int(user.password_changed_at.timestamp()):
+    if token_issued_at.timestamp() < user.password_changed_at.timestamp():
         raise err_401_not_validate_credentials()
 
     return user
@@ -68,16 +69,26 @@ oauth2_scheme_optional = OAuth2PasswordBearer(
 )
 
 
-async def get_current_user_optional(
-    token: str | None = Depends(oauth2_scheme_optional),
-    session: AsyncSession = Depends(get_session),
-) -> User | None:
-
+async def get_current_user_optional(token, session) -> User | None:
     if token is None:
         return None
-
     try:
         payload = decode_access_token(token)
-        return await UserRepository(session).get_by_id(int(payload["sub"]))
+        user_id = int(payload["sub"])
+        iat_ms = payload.get("iat_ms")
+        token_type = payload.get("type")
+
+        if iat_ms is None or token_type != "access":
+            return None
+
+        user = await UserRepository(session).get_by_id(user_id)
+        if user is None:
+            return None
+
+        token_issued_at = datetime.fromtimestamp(iat_ms / 1000, tz=timezone.utc)
+        if token_issued_at < user.password_changed_at:
+            return None
+
+        return user
     except (JWTError, ValueError, KeyError):
         return None

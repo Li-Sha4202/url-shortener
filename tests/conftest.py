@@ -143,7 +143,7 @@ async def admin_headers(client: AsyncClient, db_session) -> dict:
 @pytest.fixture
 async def other_user_headers(client: AsyncClient) -> dict:
     r = await client.post(
-        "/register",
+        "/users/register",
         json={
             "name": "otheruser",
             "email": "other@example.com",
