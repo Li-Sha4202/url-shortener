@@ -157,6 +157,8 @@ class TestLinkRouter:
             json={"original_url": "https://old.com"},
             headers=auth_headers,
         )
+        print(f">>> status: {r.status_code}")
+        print(f">>> body: {r.text}")
         code = r.json()["short_code"]
 
         r = await client.patch(

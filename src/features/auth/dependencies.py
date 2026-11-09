@@ -69,7 +69,10 @@ oauth2_scheme_optional = OAuth2PasswordBearer(
 )
 
 
-async def get_current_user_optional(token, session) -> User | None:
+async def get_current_user_optional(
+    token: str | None = Depends(oauth2_scheme_optional),
+    session: AsyncSession = Depends(get_session),
+) -> User | None:
     if token is None:
         return None
     try:

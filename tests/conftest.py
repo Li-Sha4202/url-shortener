@@ -50,11 +50,13 @@ async def client(db_session: AsyncSession):
         yield db_session
 
     app.dependency_overrides[get_session] = override_get_session
-    async with AsyncClient(
-        transport=ASGITransport(app=app), base_url="http://test"
-    ) as ac:
-        yield ac
-    app.dependency_overrides.clear()
+    try:
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as ac:
+            yield ac
+    finally:
+        app.dependency_overrides.clear()
 
 
 @pytest.fixture

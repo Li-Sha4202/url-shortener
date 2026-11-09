@@ -94,7 +94,7 @@ class TestDecodeAccessToken:
         """Изменённый токен должен вызывать исключение."""
         token = create_access_token(user_id=1)
         # Меняем последний символ
-        tampered = token[:-1] + ("X" if token[-1] != "X" else "Y")
+        tampered = token[:-2] + ("X" if token[-2] != "X" else "Y") + token[-1]
         with pytest.raises(JWTError):
             decode_access_token(tampered)
 
