@@ -62,12 +62,12 @@ def err_400_code_exists_in_db(code_name):
 def err_404_link_not_found(code_name):
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
-        detail=f'Короткая ссылка - "{code_name}" - которую вы пытались открыть, не найдена',
+        detail=f'Короткая ссылка - "{code_name}" - которую вы пытались открыть, не найдена [ID-9]',
     )
 
 
 def err_403_not_admin():
     raise HTTPException(
         status_code=status.HTTP_403_FORBIDDEN,
-        detail="Отсутствуют права администратора",
+        detail="Отсутствуют права администратора [ID-10]",
     )
